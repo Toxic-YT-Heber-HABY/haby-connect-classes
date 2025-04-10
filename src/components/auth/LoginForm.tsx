@@ -1,6 +1,6 @@
 
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { loginUser } from "@/lib/firebase";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -54,6 +54,7 @@ const MathCaptcha: React.FC<MathCaptchaProps> = ({ onVerify }) => {
 
 const LoginForm = () => {
   const { toast } = useToast();
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     username: "",
     email: "",
@@ -146,9 +147,9 @@ const LoginForm = () => {
           description: "¡Bienvenido a HABY!",
         });
         
-        // Redirect to dashboard
+        // Usar navigate en lugar de window.location para redireccionar correctamente
         setTimeout(() => {
-          window.location.href = "/dashboard";
+          navigate("/dashboard");
         }, 1000);
       }
     } catch (error) {

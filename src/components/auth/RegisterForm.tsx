@@ -1,6 +1,6 @@
 
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { registerUser } from "@/lib/firebase";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -104,6 +104,7 @@ const TermsAndConditions = () => (
 
 const RegisterForm = () => {
   const { toast } = useToast();
+  const navigate = useNavigate();
   const [userType, setUserType] = useState("student");
   const [formData, setFormData] = useState({
     username: "",
@@ -236,12 +237,14 @@ const RegisterForm = () => {
           description: "¡Su cuenta ha sido creada correctamente!",
         });
         
-        // Redirect to login or dashboard
+        // Usar navigate en lugar de window.location para redireccionar correctamente
         setTimeout(() => {
-          window.location.href = userType === "student" 
-            ? "/dashboard" 
-            : "/auth?tab=login";
-        }, 2000);
+          if (userType === "student") {
+            navigate("/dashboard");
+          } else {
+            navigate("/auth?tab=login");
+          }
+        }, 1500);
       }
     } catch (error) {
       toast({
