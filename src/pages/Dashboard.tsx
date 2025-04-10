@@ -34,7 +34,7 @@ const Dashboard = () => {
 
   return (
     <SidebarProvider>
-      <div className="min-h-screen flex flex-col">
+      <div className="min-h-screen flex flex-col w-full">
         <Header />
         <div className="flex-1 flex">
           <MainSidebar />
