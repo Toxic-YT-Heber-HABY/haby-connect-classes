@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { 
   Calendar,
@@ -102,7 +102,7 @@ const ClassDropdown = ({ isActive, isOpen, toggleOpen, onClassClick }: ClassDrop
   const [classes, setClasses] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
-  useState(() => {
+  useEffect(() => {
     const fetchClasses = async () => {
       try {
         const fetchedClasses = await getClasses();
@@ -115,7 +115,7 @@ const ClassDropdown = ({ isActive, isOpen, toggleOpen, onClassClick }: ClassDrop
     };
 
     fetchClasses();
-  });
+  }, []);
 
   return (
     <div className="space-y-1">
