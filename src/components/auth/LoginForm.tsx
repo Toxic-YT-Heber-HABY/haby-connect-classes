@@ -16,7 +16,11 @@ import {
 } from "@/components/ui/card";
 import { Eye, EyeOff } from "lucide-react";
 
-const MathCaptcha = ({ onVerify }: { onVerify: (isValid: boolean) => void }) => {
+interface MathCaptchaProps {
+  onVerify: (isValid: boolean) => void;
+}
+
+const MathCaptcha: React.FC<MathCaptchaProps> = ({ onVerify }) => {
   const [answer, setAnswer] = useState("");
   const problem = "5 × 5 = ?";
   const correctAnswer = "25";
