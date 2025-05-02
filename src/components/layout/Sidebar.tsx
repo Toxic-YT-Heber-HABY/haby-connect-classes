@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { 
@@ -295,7 +294,7 @@ export function MainSidebar({ onMobileClose }: { onMobileClose?: () => void }) {
 
 export function MobileMenuButton() {
   return (
-    <SidebarTrigger asChild>
+    <SidebarTrigger>
       <Button variant="ghost" size="icon" className="md:hidden">
         <Menu className="h-5 w-5" />
         <span className="sr-only">Toggle menu</span>
