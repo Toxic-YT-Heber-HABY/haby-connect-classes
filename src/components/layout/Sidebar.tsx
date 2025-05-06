@@ -184,13 +184,14 @@ export function MainSidebar({ onMobileClose }: { onMobileClose?: () => void }) {
           <h1 className="text-xl font-bold tracking-tight">HABY</h1>
         </div>
         <div className="ml-auto md:hidden">
-          <SidebarTrigger asChild>
+          <SidebarTrigger>
             <Button
               variant="ghost"
               size="icon"
               onClick={onMobileClose}
             >
               <X className="h-5 w-5" />
+              <span className="sr-only">Close menu</span>
             </Button>
           </SidebarTrigger>
         </div>
@@ -295,10 +296,8 @@ export function MainSidebar({ onMobileClose }: { onMobileClose?: () => void }) {
 export function MobileMenuButton() {
   return (
     <SidebarTrigger>
-      <Button variant="ghost" size="icon" className="md:hidden">
-        <Menu className="h-5 w-5" />
-        <span className="sr-only">Toggle menu</span>
-      </Button>
+      <Menu className="h-5 w-5" />
+      <span className="sr-only">Toggle menu</span>
     </SidebarTrigger>
   );
 }
