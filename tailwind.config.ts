@@ -60,6 +60,7 @@ export default {
         "haby-gray": "#F1F0FB",
         "haby-blue": "#1EAEDB",
         "haby-charcoal": "#221F26",
+        "haby-darkPurple": "#4A1E9E", // Added this line to fix the error
         sidebar: {
           foreground: "hsl(var(--sidebar-foreground))",
           background: "hsl(var(--sidebar-background))",

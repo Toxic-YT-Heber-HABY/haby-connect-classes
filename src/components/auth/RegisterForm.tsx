@@ -1,420 +1,298 @@
+
 import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import { Eye, EyeOff } from "lucide-react";
 import { registerUser } from "@/lib/firebase";
+import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Label } from "@/components/ui/label";
-import { useToast } from "@/hooks/use-toast";
-import { 
-  Card, 
-  CardContent, 
-  CardDescription, 
-  CardFooter, 
-  CardHeader, 
-  CardTitle 
-} from "@/components/ui/card";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import {
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
-} from "@/components/ui/tabs";
 
-const MathCaptcha = ({ onVerify }: { onVerify: (isValid: boolean) => void }) => {
-  const [answer, setAnswer] = useState("");
-  const problem = "5 × 5 = ?";
-  const correctAnswer = "25";
+type UserType = "student" | "teacher" | "admin";
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-    setAnswer(value);
-    if (value === correctAnswer) {
-      onVerify(true);
-    } else {
-      onVerify(false);
-    }
-  };
+interface RegisterFormProps {
+  onToggleForm: () => void;
+}
 
-  return (
-    <div className="space-y-2">
-      <Label htmlFor="captcha">Captcha: Resuelve el problema matemático</Label>
-      <div className="flex items-center space-x-2">
-        <div className="bg-muted p-2 rounded-md font-medium">{problem}</div>
-        <Input
-          id="captcha"
-          className="w-20"
-          value={answer}
-          onChange={handleChange}
-          placeholder="?"
-        />
-      </div>
-    </div>
-  );
-};
-
-const TermsAndConditions = () => (
-  <div className="max-h-80 overflow-y-auto text-sm text-muted-foreground">
-    <h2 className="text-lg font-semibold mb-2">Términos y Condiciones de HABY</h2>
-    <p className="mb-4">
-      Fecha de última actualización: 10 de abril de 2025
-    </p>
-    <p className="mb-2">
-      Bienvenido a HABY Open The Doors. Estos términos y condiciones rigen el uso de nuestra plataforma educativa.
-    </p>
-    <h3 className="font-semibold mt-4 mb-2">1. Aceptación de los Términos</h3>
-    <p className="mb-2">
-      Al acceder y utilizar la plataforma HABY, usted acepta cumplir con estos términos y condiciones y todas las leyes y regulaciones aplicables. Si no está de acuerdo con alguno de estos términos, está prohibido utilizar o acceder a este sitio.
-    </p>
-    <h3 className="font-semibold mt-4 mb-2">2. Uso de la Plataforma</h3>
-    <p className="mb-2">
-      HABY se compromete a proporcionar un entorno educativo seguro y productivo. Los usuarios deben utilizar la plataforma exclusivamente para fines educativos y respetar la integridad académica en todo momento.
-    </p>
-    <h3 className="font-semibold mt-4 mb-2">3. Cuentas de Usuario</h3>
-    <p className="mb-2">
-      Es responsabilidad del usuario mantener la confidencialidad de su información de cuenta, incluyendo contraseñas y datos personales. El usuario acepta asumir la responsabilidad de todas las actividades que ocurran bajo su cuenta.
-    </p>
-    <h3 className="font-semibold mt-4 mb-2">4. Contenido</h3>
-    <p className="mb-2">
-      Los usuarios son responsables del contenido que publican en la plataforma. HABY se reserva el derecho de eliminar cualquier contenido inapropiado, ilegal o que viole nuestras políticas.
-    </p>
-    <h3 className="font-semibold mt-4 mb-2">5. Privacidad</h3>
-    <p className="mb-2">
-      Nuestra política de privacidad describe cómo recopilamos, utilizamos y protegemos su información personal. Al utilizar HABY, usted acepta nuestras prácticas de privacidad.
-    </p>
-    <h3 className="font-semibold mt-4 mb-2">6. Modificaciones</h3>
-    <p className="mb-2">
-      HABY se reserva el derecho de modificar o actualizar estos términos en cualquier momento sin previo aviso. Es responsabilidad del usuario revisar periódicamente estos términos para estar al tanto de los cambios.
-    </p>
-    <h3 className="font-semibold mt-4 mb-2">7. Contacto</h3>
-    <p className="mb-2">
-      Si tiene alguna pregunta sobre estos términos y condiciones, puede contactarnos en habyopenthedoors@gmail.com.
-    </p>
-  </div>
-);
-
-const RegisterForm = () => {
+const RegisterForm: React.FC<RegisterFormProps> = ({ onToggleForm }) => {
+  const [userType, setUserType] = useState<UserType>("student");
+  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
+  const [folio, setFolio] = useState("");
+  const [curp, setCurp] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
+  
   const { toast } = useToast();
   const navigate = useNavigate();
-  const [userType, setUserType] = useState("student");
-  const [formData, setFormData] = useState({
-    username: "",
-    email: "",
-    folio: "",
-    curp: "",
-    password: "",
-    confirmPassword: ""
-  });
-  const [errors, setErrors] = useState({
-    username: "",
-    email: "",
-    folio: "",
-    curp: "",
-    password: "",
-    confirmPassword: ""
-  });
-  const [captchaVerified, setCaptchaVerified] = useState(false);
-  const [termsAccepted, setTermsAccepted] = useState(false);
-  const [isSubmitting, setIsSubmitting] = useState(false);
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
-    
-    // Clear error when user types
-    if (errors[name as keyof typeof errors]) {
-      setErrors({ ...errors, [name]: "" });
-    }
-  };
 
   const validateForm = () => {
-    let isValid = true;
-    const newErrors = { ...errors };
-
-    // Username validation
-    if (!formData.username) {
-      newErrors.username = "El nombre de usuario es obligatorio";
-      isValid = false;
-    } else if (formData.username.length < 3) {
-      newErrors.username = "El nombre debe tener al menos 3 caracteres";
-      isValid = false;
+    if (!username.trim()) {
+      toast({
+        title: "Error",
+        description: "Por favor, ingresa un nombre de usuario",
+        variant: "destructive",
+      });
+      return false;
     }
-
-    // Email validation
-    if (!formData.email) {
-      newErrors.email = "El correo electrónico es obligatorio";
-      isValid = false;
-    } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
-      newErrors.email = "El correo electrónico no es válido";
-      isValid = false;
+    
+    if (!email.trim()) {
+      toast({
+        title: "Error",
+        description: "Por favor, ingresa un correo electrónico",
+        variant: "destructive",
+      });
+      return false;
     }
-
-    // Folio validation
-    if (!formData.folio) {
-      newErrors.folio = "El folio es obligatorio";
-      isValid = false;
+    
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      toast({
+        title: "Error",
+        description: "Por favor, ingresa un correo electrónico válido",
+        variant: "destructive",
+      });
+      return false;
     }
-
-    // CURP validation
-    if (!formData.curp) {
-      newErrors.curp = "La CURP es obligatoria";
-      isValid = false;
-    } else if (!/^[A-Z]{4}\d{6}[HM][A-Z]{5}[0-9A-Z]\d$/.test(formData.curp)) {
-      newErrors.curp = "La CURP no tiene un formato válido";
-      isValid = false;
+    
+    if (!password.trim()) {
+      toast({
+        title: "Error",
+        description: "Por favor, ingresa una contraseña",
+        variant: "destructive",
+      });
+      return false;
     }
-
-    // Password validation for both students and teachers
-    if (!formData.password) {
-      newErrors.password = "La contraseña es obligatoria";
-      isValid = false;
-    } else if (formData.password.length < 8) {
-      newErrors.password = "La contraseña debe tener al menos 8 caracteres";
-      isValid = false;
+    
+    if (password.length < 6) {
+      toast({
+        title: "Error",
+        description: "La contraseña debe tener al menos 6 caracteres",
+        variant: "destructive",
+      });
+      return false;
     }
-
-    if (!formData.confirmPassword) {
-      newErrors.confirmPassword = "Confirme su contraseña";
-      isValid = false;
-    } else if (formData.password !== formData.confirmPassword) {
-      newErrors.confirmPassword = "Las contraseñas no coinciden";
-      isValid = false;
+    
+    if (password !== confirmPassword) {
+      toast({
+        title: "Error",
+        description: "Las contraseñas no coinciden",
+        variant: "destructive",
+      });
+      return false;
     }
-
-    setErrors(newErrors);
-    return isValid;
+    
+    if (userType === "student") {
+      if (!folio.trim()) {
+        toast({
+          title: "Error",
+          description: "Por favor, ingresa tu folio",
+          variant: "destructive",
+        });
+        return false;
+      }
+      
+      if (!curp.trim()) {
+        toast({
+          title: "Error",
+          description: "Por favor, ingresa tu CURP",
+          variant: "destructive",
+        });
+        return false;
+      }
+      
+      if (curp.length !== 18) {
+        toast({
+          title: "Error",
+          description: "El CURP debe tener 18 caracteres",
+          variant: "destructive",
+        });
+        return false;
+      }
+    }
+    
+    return true;
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!validateForm()) {
-      return;
-    }
+    if (!validateForm()) return;
     
-    if (!captchaVerified) {
-      toast({
-        title: "Error de verificación",
-        description: "Por favor, complete el captcha correctamente",
-        variant: "destructive"
-      });
-      return;
-    }
-    
-    if (!termsAccepted) {
-      toast({
-        title: "Términos y condiciones",
-        description: "Debe aceptar los términos y condiciones para continuar",
-        variant: "destructive"
-      });
-      return;
-    }
-    
-    setIsSubmitting(true);
+    setLoading(true);
     
     try {
-      const userData = {
-        ...formData,
-        userType
-      };
+      await registerUser({
+        userType,
+        username,
+        email,
+        folio: userType === "student" ? folio : "",
+        curp: userType === "student" ? curp : "",
+        password,
+      });
       
-      const result = await registerUser(userData);
-      
-      if (result.success) {
-        toast({
-          title: "Registro exitoso",
-          description: "¡Su cuenta ha sido creada correctamente!",
-        });
-        
-        // Redirect after successful registration
-        setTimeout(() => {
-          if (userType === "student") {
-            navigate("/dashboard");
-          } else {
-            navigate("/auth?tab=login");
-          }
-        }, 1500);
-      }
-    } catch (error) {
       toast({
-        title: "Error en el registro",
-        description: "Ha ocurrido un error. Por favor, inténtelo de nuevo.",
-        variant: "destructive"
+        title: "Registro exitoso",
+        description: "Tu cuenta ha sido creada correctamente",
+      });
+      
+      navigate("/dashboard");
+    } catch (error: any) {
+      toast({
+        title: "Error de registro",
+        description: error.message || "Ocurrió un error durante el registro",
+        variant: "destructive",
       });
     } finally {
-      setIsSubmitting(false);
+      setLoading(false);
     }
   };
 
   return (
-    <Card className="w-full max-w-lg animate-fade-in">
-      <CardHeader>
-        <CardTitle className="text-2xl text-center">Registro en HABY</CardTitle>
-        <CardDescription className="text-center">
-          Crea tu cuenta para comenzar a utilizar la plataforma
-        </CardDescription>
-      </CardHeader>
-      <CardContent>
-        <Tabs value={userType} onValueChange={setUserType} className="mb-6">
-          <TabsList className="grid w-full grid-cols-2">
-            <TabsTrigger value="student">Alumno</TabsTrigger>
-            <TabsTrigger value="teacher">Profesor</TabsTrigger>
-          </TabsList>
-        </Tabs>
-
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div className="space-y-2">
-            <Label htmlFor="username">Nombre de usuario</Label>
-            <Input
-              id="username"
-              name="username"
-              value={formData.username}
-              onChange={handleChange}
-              placeholder="Nombre de usuario"
-              className={errors.username ? "border-destructive" : ""}
-            />
-            {errors.username && (
-              <p className="text-destructive text-sm">{errors.username}</p>
-            )}
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="email">Correo electrónico</Label>
-            <Input
-              id="email"
-              name="email"
-              type="email"
-              value={formData.email}
-              onChange={handleChange}
-              placeholder="correo@ejemplo.com"
-              className={errors.email ? "border-destructive" : ""}
-            />
-            {errors.email && (
-              <p className="text-destructive text-sm">{errors.email}</p>
-            )}
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="folio">Folio</Label>
-            <Input
-              id="folio"
-              name="folio"
-              value={formData.folio}
-              onChange={handleChange}
-              placeholder="Folio de identificación"
-              className={errors.folio ? "border-destructive" : ""}
-            />
-            {errors.folio && (
-              <p className="text-destructive text-sm">{errors.folio}</p>
-            )}
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="curp">CURP</Label>
-            <Input
-              id="curp"
-              name="curp"
-              value={formData.curp}
-              onChange={handleChange}
-              placeholder="CURP"
-              className={errors.curp ? "border-destructive" : ""}
-            />
-            {errors.curp && (
-              <p className="text-destructive text-sm">{errors.curp}</p>
-            )}
-          </div>
-
-          {/* Password fields for both students and teachers */}
-          <div className="space-y-2">
-            <Label htmlFor="password">Contraseña</Label>
-            <Input
-              id="password"
-              name="password"
-              type="password"
-              value={formData.password}
-              onChange={handleChange}
-              placeholder="Mínimo 8 caracteres"
-              className={errors.password ? "border-destructive" : ""}
-            />
-            {errors.password && (
-              <p className="text-destructive text-sm">{errors.password}</p>
-            )}
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="confirmPassword">Confirmar contraseña</Label>
-            <Input
-              id="confirmPassword"
-              name="confirmPassword"
-              type="password"
-              value={formData.confirmPassword}
-              onChange={handleChange}
-              placeholder="Confirme su contraseña"
-              className={errors.confirmPassword ? "border-destructive" : ""}
-            />
-            {errors.confirmPassword && (
-              <p className="text-destructive text-sm">{errors.confirmPassword}</p>
-            )}
-          </div>
-
-          <MathCaptcha onVerify={setCaptchaVerified} />
-
-          <div className="flex items-center space-x-2">
-            <Checkbox 
-              id="terms" 
-              checked={termsAccepted} 
-              onCheckedChange={(checked) => setTermsAccepted(checked === true)}
-              className={termsAccepted ? "bg-green-500 text-white border-green-500" : "bg-red-100 border-red-300"}
-            />
-            <div className="flex items-center space-x-1">
-              <Label htmlFor="terms" className="text-sm font-medium">
-                Acepto los 
-              </Label>
-              <Dialog>
-                <DialogTrigger asChild>
-                  <Button variant="link" className="p-0 h-auto text-sm haby-link">
-                    términos y condiciones
-                  </Button>
-                </DialogTrigger>
-                <DialogContent className="max-w-lg">
-                  <DialogHeader>
-                    <DialogTitle>Términos y Condiciones</DialogTitle>
-                    <DialogDescription>
-                      Por favor lea cuidadosamente estos términos antes de registrarse.
-                    </DialogDescription>
-                  </DialogHeader>
-                  <TermsAndConditions />
-                </DialogContent>
-              </Dialog>
+    <div className="w-full max-w-md p-6 bg-white rounded-lg shadow-md dark:bg-gray-800">
+      <h2 className="text-2xl font-bold mb-6 text-center">Crear Cuenta</h2>
+      
+      <div className="flex mb-6 rounded-md overflow-hidden border">
+        <button
+          type="button"
+          onClick={() => setUserType("student")}
+          className={`flex-1 py-2 px-4 text-center ${
+            userType === "student"
+              ? "bg-haby-purple text-white"
+              : "bg-white text-gray-700 hover:bg-gray-100 dark:bg-gray-700 dark:text-gray-200 dark:hover:bg-gray-600"
+          }`}
+        >
+          Estudiante
+        </button>
+        <button
+          type="button"
+          onClick={() => setUserType("teacher")}
+          className={`flex-1 py-2 px-4 text-center ${
+            userType === "teacher"
+              ? "bg-haby-purple text-white"
+              : "bg-white text-gray-700 hover:bg-gray-100 dark:bg-gray-700 dark:text-gray-200 dark:hover:bg-gray-600"
+          }`}
+        >
+          Profesor
+        </button>
+      </div>
+      
+      <form onSubmit={handleRegister}>
+        <div className="mb-4">
+          <label className="block text-sm font-medium mb-1">Nombre de Usuario</label>
+          <Input
+            type="text"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+            placeholder="Ingrese su nombre de usuario"
+            disabled={loading}
+          />
+        </div>
+        
+        <div className="mb-4">
+          <label className="block text-sm font-medium mb-1">Correo Electrónico</label>
+          <Input
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder="correo@ejemplo.com"
+            disabled={loading}
+          />
+        </div>
+        
+        {userType === "student" && (
+          <>
+            <div className="mb-4">
+              <label className="block text-sm font-medium mb-1">Folio</label>
+              <Input
+                type="text"
+                value={folio}
+                onChange={(e) => setFolio(e.target.value)}
+                placeholder="Ingrese su folio"
+                disabled={loading}
+              />
             </div>
+            
+            <div className="mb-4">
+              <label className="block text-sm font-medium mb-1">CURP</label>
+              <Input
+                type="text"
+                value={curp}
+                onChange={(e) => setCurp(e.target.value.toUpperCase())}
+                placeholder="Ingrese su CURP"
+                maxLength={18}
+                disabled={loading}
+              />
+            </div>
+          </>
+        )}
+        
+        <div className="mb-4">
+          <label className="block text-sm font-medium mb-1">Contraseña</label>
+          <div className="relative">
+            <Input
+              type={showPassword ? "text" : "password"}
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="Contraseña"
+              disabled={loading}
+              className="pr-10"
+            />
+            <button
+              type="button"
+              className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600"
+              onClick={() => setShowPassword(!showPassword)}
+            >
+              {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+            </button>
           </div>
-
-          <Button 
-            type="submit" 
-            className="w-full haby-button-primary"
-            disabled={isSubmitting}
-          >
-            {isSubmitting ? "Procesando..." : "Registrarse"}
-          </Button>
-        </form>
-      </CardContent>
-      <CardFooter className="flex justify-center">
-        <p className="text-sm text-muted-foreground">
-          ¿Ya tienes una cuenta?{" "}
-          <Link to="/auth?tab=login" className="haby-link">
-            Iniciar sesión
-          </Link>
-        </p>
-      </CardFooter>
-    </Card>
+        </div>
+        
+        <div className="mb-6">
+          <label className="block text-sm font-medium mb-1">Confirmar Contraseña</label>
+          <div className="relative">
+            <Input
+              type={showConfirmPassword ? "text" : "password"}
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+              placeholder="Confirmar contraseña"
+              disabled={loading}
+              className="pr-10"
+            />
+            <button
+              type="button"
+              className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600"
+              onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+            >
+              {showConfirmPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+            </button>
+          </div>
+        </div>
+        
+        <Button
+          type="submit"
+          className="w-full mb-4"
+          disabled={loading}
+        >
+          {loading ? "Registrando..." : "Registrarse"}
+        </Button>
+        
+        <div className="text-center">
+          <p className="text-sm">
+            ¿Ya tienes una cuenta?{" "}
+            <button
+              type="button"
+              onClick={onToggleForm}
+              className="text-haby-purple hover:text-haby-purple-dark font-medium"
+            >
+              Inicia Sesión
+            </button>
+          </p>
+        </div>
+      </form>
+    </div>
   );
 };
 
