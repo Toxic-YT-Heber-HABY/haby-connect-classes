@@ -1,6 +1,6 @@
 
 import { Link } from "react-router-dom";
-import { Facebook, Instagram, Youtube } from "lucide-react";
+import { Facebook, Instagram, Youtube, Twitter } from "lucide-react";
 
 export function Footer() {
   const currentYear = new Date().getFullYear();
@@ -10,7 +10,7 @@ export function Footer() {
       <div className="container py-8 px-4 mx-auto">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           <div className="space-y-4">
-            <h3 className="text-lg font-semibold">HABY</h3>
+            <h3 className="text-lg font-semibold">HABY-CLASS</h3>
             <p className="text-sm text-muted-foreground">
               Una plataforma educativa para facilitar la interacción entre profesores y alumnos.
             </p>
@@ -100,7 +100,7 @@ export function Footer() {
         
         <div className="mt-8 pt-8 border-t flex flex-col md:flex-row items-center justify-between gap-4">
           <div className="text-sm text-muted-foreground">
-            © {currentYear} HABY Open The Doors. Todos los derechos reservados.
+            © {currentYear} HABY-CLASS Open The Doors. Todos los derechos reservados.
           </div>
           
           <div className="flex gap-4">
@@ -108,16 +108,18 @@ export function Footer() {
               href="https://www.youtube.com/@HABYOpenDoors" 
               target="_blank" 
               rel="noopener noreferrer"
-              className="text-muted-foreground hover:text-foreground transition-colors"
+              className="text-muted-foreground hover:text-foreground transition-colors hover:scale-110"
+              aria-label="Canal de YouTube"
             >
               <Youtube size={20} />
               <span className="sr-only">YouTube</span>
             </a>
             <a 
-              href="https://www.facebook.com/share/12HJiSutd3H/" 
+              href="https://www.facebook.com/zadkiel.garcia.31/" 
               target="_blank" 
               rel="noopener noreferrer"
-              className="text-muted-foreground hover:text-foreground transition-colors"
+              className="text-muted-foreground hover:text-foreground transition-colors hover:scale-110"
+              aria-label="Página de Facebook"
             >
               <Facebook size={20} />
               <span className="sr-only">Facebook</span>
@@ -126,10 +128,21 @@ export function Footer() {
               href="https://www.instagram.com/habydoors/" 
               target="_blank" 
               rel="noopener noreferrer"
-              className="text-muted-foreground hover:text-foreground transition-colors"
+              className="text-muted-foreground hover:text-foreground transition-colors hover:scale-110"
+              aria-label="Perfil de Instagram"
             >
               <Instagram size={20} />
               <span className="sr-only">Instagram</span>
+            </a>
+            <a 
+              href="https://x.com/Haby_Open_Doors" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="text-muted-foreground hover:text-foreground transition-colors hover:scale-110"
+              aria-label="Perfil de Twitter/X"
+            >
+              <Twitter size={20} />
+              <span className="sr-only">Twitter/X</span>
             </a>
           </div>
         </div>

@@ -27,6 +27,8 @@
     --radius: 0.75rem;
     --sidebar-foreground: 240 10% 3.9%;
     --sidebar-background: 0 0% 100%;
+    --haby-purple: 270 75% 60%;
+    --haby-purple-dark: 270 75% 50%;
   }
 
   .dark {
@@ -51,6 +53,8 @@
     --ring: 240 4.9% 83.9%;
     --sidebar-foreground: 0 0% 98%;
     --sidebar-background: 240 10% 3.9%;
+    --haby-purple: 270 75% 60%;
+    --haby-purple-dark: 270 75% 50%;
   }
 }
 
@@ -66,19 +70,19 @@
 
 @layer components {
   .haby-button-primary {
-    @apply bg-haby-purple hover:bg-haby-purple-dark text-white transition-colors;
+    @apply bg-purple-600 hover:bg-purple-700 text-white transition-colors;
   }
 
   .haby-button-secondary {
-    @apply bg-white hover:bg-gray-100 text-haby-purple border border-haby-purple transition-colors;
+    @apply bg-white hover:bg-gray-100 text-purple-600 border border-purple-600 transition-colors;
   }
 
   .haby-link {
-    @apply text-haby-purple hover:text-haby-purple-dark underline transition-colors;
+    @apply text-purple-600 hover:text-purple-700 underline transition-colors;
   }
 
   .haby-card {
-    @apply border-2 border-transparent hover:border-haby-purple transition-all duration-300 transform hover:-translate-y-1;
+    @apply border-2 border-transparent hover:border-purple-600 transition-all duration-300 transform hover:-translate-y-1;
   }
   
   .card-hover-effect {
