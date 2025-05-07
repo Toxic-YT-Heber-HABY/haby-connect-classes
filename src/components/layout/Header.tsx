@@ -65,11 +65,13 @@ export function Header() {
   const handleThemeChange = (newTheme: Theme) => {
     setTheme(newTheme);
     // In a real app, you might want to save this preference
+    localStorage.setItem("theme", newTheme);
   };
 
   const handleLanguageChange = (newLanguage: Language) => {
     setLanguage(newLanguage);
     // In a real app, you would implement actual language switching
+    localStorage.setItem("language", newLanguage);
   };
 
   const handleSearch = (e: React.FormEvent) => {
@@ -95,9 +97,14 @@ export function Header() {
           <MobileMenuButton />
         </div>
         
-        <div className="hidden md:flex">
-          <Link to="/dashboard" className="flex items-center font-bold">
-            HABY
+        <div className="hidden md:flex items-center gap-2">
+          <Link to="/dashboard" className="flex items-center">
+            <img 
+              src="/images/haby-logo.png" 
+              alt="HABY Logo" 
+              className="h-8 w-auto mr-2"
+            />
+            <span className="font-bold text-xl">HABY</span>
           </Link>
         </div>
         

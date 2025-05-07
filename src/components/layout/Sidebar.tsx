@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { 
@@ -180,20 +181,18 @@ export function MainSidebar({ onMobileClose }: { onMobileClose?: () => void }) {
     <Sidebar className="border-r border-border">
       <SidebarHeader className="flex h-14 items-center border-b px-4">
         <div className="flex items-center gap-x-2">
-          <GraduationCap className="h-6 w-6 text-haby-purple" />
+          <img src="/images/haby-logo.png" alt="HABY Logo" className="h-6 w-6" />
           <h1 className="text-xl font-bold tracking-tight">HABY</h1>
         </div>
         <div className="ml-auto md:hidden">
-          <SidebarTrigger>
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={onMobileClose}
-            >
-              <X className="h-5 w-5" />
-              <span className="sr-only">Close menu</span>
-            </Button>
-          </SidebarTrigger>
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={onMobileClose}
+          >
+            <X className="h-5 w-5" />
+            <span className="sr-only">Close menu</span>
+          </Button>
         </div>
       </SidebarHeader>
       <SidebarContent>
@@ -295,9 +294,11 @@ export function MainSidebar({ onMobileClose }: { onMobileClose?: () => void }) {
 
 export function MobileMenuButton() {
   return (
-    <SidebarTrigger>
-      <Menu className="h-5 w-5" />
-      <span className="sr-only">Toggle menu</span>
+    <SidebarTrigger asChild>
+      <Button variant="ghost" size="icon">
+        <Menu className="h-5 w-5" />
+        <span className="sr-only">Toggle menu</span>
+      </Button>
     </SidebarTrigger>
   );
 }
