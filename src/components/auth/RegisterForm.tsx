@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Eye, EyeOff } from "lucide-react";
@@ -11,6 +10,15 @@ type UserType = "student" | "teacher" | "admin";
 
 interface RegisterFormProps {
   onToggleForm: () => void;
+}
+
+interface RegisterDataType {
+  userType: UserType;
+  username: string;
+  email: string;
+  folio: string;
+  curp: string;
+  password: string;
 }
 
 const RegisterForm: React.FC<RegisterFormProps> = ({ onToggleForm }) => {
@@ -131,7 +139,7 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ onToggleForm }) => {
         folio: userType === "student" ? folio : "",
         curp: userType === "student" ? curp : "",
         password,
-      });
+      } as RegisterDataType);
       
       toast({
         title: "Registro exitoso",

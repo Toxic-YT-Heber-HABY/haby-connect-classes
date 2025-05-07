@@ -1,4 +1,3 @@
-
 import { initializeApp } from 'firebase/app';
 import { 
   getAuth, 
@@ -129,9 +128,9 @@ export const verifyRecoveryCode = async (code: string) => {
   return { success: true };
 };
 
-export const updateUserPassword = async (newPassword: string) => {
+export const updateUserPassword = async (email: string, code: string, newPassword: string) => {
   try {
-    console.log('Updating password:', newPassword);
+    console.log('Updating password for:', email, 'with code:', code);
     // const user = auth.currentUser;
     // if (user) {
     //   await updatePassword(user, newPassword);

@@ -30,6 +30,14 @@ const Auth = () => {
   const handleTabChange = (value: string) => {
     setSearchParams({ tab: value });
   };
+
+  const handleToggleForm = () => {
+    setSearchParams({ tab: "login" });
+  };
+  
+  const handleBackToLogin = () => {
+    setSearchParams({ tab: "login" });
+  };
   
   // Show loading state while checking authentication
   if (loading) {
@@ -80,10 +88,10 @@ const Auth = () => {
               <LoginForm />
             </TabsContent>
             <TabsContent value="register" className="animate-enter">
-              <RegisterForm />
+              <RegisterForm onToggleForm={handleToggleForm} />
             </TabsContent>
             <TabsContent value="recovery" className="animate-enter">
-              <RecoveryForm />
+              <RecoveryForm onBackToLogin={handleBackToLogin} />
             </TabsContent>
           </Tabs>
         </div>
