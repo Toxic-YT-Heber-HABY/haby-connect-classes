@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { registerUser } from "@/lib/firebase";
@@ -173,23 +172,21 @@ const RegisterForm = () => {
       isValid = false;
     }
 
-    // Password validation for teachers
-    if (userType === "teacher") {
-      if (!formData.password) {
-        newErrors.password = "La contraseña es obligatoria";
-        isValid = false;
-      } else if (formData.password.length < 8) {
-        newErrors.password = "La contraseña debe tener al menos 8 caracteres";
-        isValid = false;
-      }
+    // Password validation for both students and teachers
+    if (!formData.password) {
+      newErrors.password = "La contraseña es obligatoria";
+      isValid = false;
+    } else if (formData.password.length < 8) {
+      newErrors.password = "La contraseña debe tener al menos 8 caracteres";
+      isValid = false;
+    }
 
-      if (!formData.confirmPassword) {
-        newErrors.confirmPassword = "Confirme su contraseña";
-        isValid = false;
-      } else if (formData.password !== formData.confirmPassword) {
-        newErrors.confirmPassword = "Las contraseñas no coinciden";
-        isValid = false;
-      }
+    if (!formData.confirmPassword) {
+      newErrors.confirmPassword = "Confirme su contraseña";
+      isValid = false;
+    } else if (formData.password !== formData.confirmPassword) {
+      newErrors.confirmPassword = "Las contraseñas no coinciden";
+      isValid = false;
     }
 
     setErrors(newErrors);
@@ -237,7 +234,7 @@ const RegisterForm = () => {
           description: "¡Su cuenta ha sido creada correctamente!",
         });
         
-        // Usar navigate en lugar de window.location para redireccionar correctamente
+        // Redirect after successful registration
         setTimeout(() => {
           if (userType === "student") {
             navigate("/dashboard");
@@ -335,41 +332,38 @@ const RegisterForm = () => {
             )}
           </div>
 
-          {userType === "teacher" && (
-            <>
-              <div className="space-y-2">
-                <Label htmlFor="password">Contraseña</Label>
-                <Input
-                  id="password"
-                  name="password"
-                  type="password"
-                  value={formData.password}
-                  onChange={handleChange}
-                  placeholder="Mínimo 8 caracteres"
-                  className={errors.password ? "border-destructive" : ""}
-                />
-                {errors.password && (
-                  <p className="text-destructive text-sm">{errors.password}</p>
-                )}
-              </div>
+          {/* Password fields for both students and teachers */}
+          <div className="space-y-2">
+            <Label htmlFor="password">Contraseña</Label>
+            <Input
+              id="password"
+              name="password"
+              type="password"
+              value={formData.password}
+              onChange={handleChange}
+              placeholder="Mínimo 8 caracteres"
+              className={errors.password ? "border-destructive" : ""}
+            />
+            {errors.password && (
+              <p className="text-destructive text-sm">{errors.password}</p>
+            )}
+          </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="confirmPassword">Confirmar contraseña</Label>
-                <Input
-                  id="confirmPassword"
-                  name="confirmPassword"
-                  type="password"
-                  value={formData.confirmPassword}
-                  onChange={handleChange}
-                  placeholder="Confirme su contraseña"
-                  className={errors.confirmPassword ? "border-destructive" : ""}
-                />
-                {errors.confirmPassword && (
-                  <p className="text-destructive text-sm">{errors.confirmPassword}</p>
-                )}
-              </div>
-            </>
-          )}
+          <div className="space-y-2">
+            <Label htmlFor="confirmPassword">Confirmar contraseña</Label>
+            <Input
+              id="confirmPassword"
+              name="confirmPassword"
+              type="password"
+              value={formData.confirmPassword}
+              onChange={handleChange}
+              placeholder="Confirme su contraseña"
+              className={errors.confirmPassword ? "border-destructive" : ""}
+            />
+            {errors.confirmPassword && (
+              <p className="text-destructive text-sm">{errors.confirmPassword}</p>
+            )}
+          </div>
 
           <MathCaptcha onVerify={setCaptchaVerified} />
 
